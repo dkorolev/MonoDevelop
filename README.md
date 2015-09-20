@@ -4,6 +4,8 @@ Befriending C# and F#, befriending Windows and Linux, befriending Visual Studio 
 
 The original purpose of this repository — that has been accomplished! — was to be able to develop, build, and run F# code invoking C# code, from both Windows and Linux, and from both Visual Studio and Xamarin Studio / MonoDevelop.
 
+The stretch goal — which too been accomplished! — was to use NuGet to install a package and use it. The example now uses [Suave](http://suave.io/) from F# to spin an HTTP server on port 8083, which returns the result of a C# method.
+
 # Tricks
 
 I found it important to switch the F# project to the .NET 4.5 framework.
