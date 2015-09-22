@@ -1,7 +1,8 @@
 ﻿open Suave
-open SharedCode
+open SharedCodeCS
+open SharedCodeFS
 
 [<EntryPoint>]
 let main argv =
-    Web.defaultConfig |> Web.startWebServer <| Http.Successful.OK (FooClass.Foo())
+    Web.defaultConfig |> Web.startWebServer <| Http.Successful.OK (FooClass.Foo() + " + " + SharedFSType.ForFS + " = <3\n")
     0

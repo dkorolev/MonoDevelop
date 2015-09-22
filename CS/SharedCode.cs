@@ -1,12 +1,13 @@
 ﻿using System;
+using SharedCodeFS;
 
-namespace SharedCode
+namespace SharedCodeCS
 {
 	public class FooClass
 	{
 		public static string Foo ()
 		{
-			return "foo";
+            return "(C# + " + SharedFSType.ForCS + ")";
 		}
 	}
 }
