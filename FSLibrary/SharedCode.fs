@@ -9,6 +9,7 @@ type Shape =
     | Rectangle of width : float * length : float
     | Circle of radius : float
     | Empty
+    | Error
 
 type SharedFSType() = 
     static member ForCS = "F# into CS"
@@ -50,6 +51,11 @@ type Test() =
         let parsed1 = JsonConvert.DeserializeObject<Shape> json1
         let parsed2 = JsonConvert.DeserializeObject<Shape> json2
         let parsed3 = JsonConvert.DeserializeObject<Shape> json3
+        let parse_error =
+            try
+                JsonConvert.DeserializeObject<Shape> "Meh!"
+            with
+            | :? JsonException -> Error
         shape1 |> should equal parsed1
         shape2 |> should equal parsed2
         shape3 |> should equal parsed3
@@ -62,3 +68,4 @@ type Test() =
         parsed3 = shape1 |> should be False
         parsed3 = shape2 |> should be False
         parsed3 = shape3 |> should be True
+        Error = parse_error |> should be True
