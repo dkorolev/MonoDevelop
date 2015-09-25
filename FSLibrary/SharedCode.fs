@@ -101,3 +101,13 @@ type Test() =
         parsed4 = shape3 |> should be False
         parsed4 = shape4 |> should be True
         Error = parsedX |> should be True
+
+        let extra_fields = Shape.FromJSON """
+{"Case":"Rectangle","Fields":[{"width":1.3,"length":10.0,"foo":0,"bar":"meh","boo":[],"qua":{}}]}
+        """
+        shape1 |> should equal extra_fields
+
+        let different_order = Shape.FromJSON """
+{"Fields":[{"foo":0,"bar":"meh","length":10.0,"boo":[],"width":1.3,"qua":{}}],"Case":"Rectangle"}
+        """
+        shape1 |> should equal different_order
