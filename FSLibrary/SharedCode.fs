@@ -11,13 +11,15 @@ type Shape =
     | Magic of SeveralShapes
     | Empty
     | Error
+    static member ToJSON(shape : Shape) : string = JsonConvert.SerializeObject(shape)
+    static member FromJSON(json : string) = try JsonConvert.DeserializeObject<Shape> json with | :? JsonException -> Error
 and Rectangle = {
     width : float
     length : float
 }
 and SeveralShapes = {
     foo : int
-    bar : Shape array
+    bar : Shape list
 }
 
 type SharedFSType() = 
@@ -50,12 +52,16 @@ type Test() =
         let shape3 = Empty
         let shape4 = Magic {
             foo = 42
-            bar = [| shape1; shape2 |]
+            bar =
+            [
+              shape1
+              shape2
+            ]
         }
-        let json1 = JsonConvert.SerializeObject(shape1)
-        let json2 = JsonConvert.SerializeObject(shape2)
-        let json3 = JsonConvert.SerializeObject(shape3)
-        let json4 = JsonConvert.SerializeObject(shape4)
+        let json1 = Shape.ToJSON shape1
+        let json2 = Shape.ToJSON shape2
+        let json3 = Shape.ToJSON shape3
+        let json4 = Shape.ToJSON shape4
 
         """
 {"Case":"Rectangle","Fields":[{"width":1.3,"length":10.0}]}
@@ -69,15 +75,11 @@ type Test() =
         """
 {"Case":"Magic","Fields":[{"foo":42,"bar":[{"Case":"Rectangle","Fields":[{"width":1.3,"length":10.0}]},{"Case":"Circle","Fields":[2.5]}]}]}
         """.Trim() |> should equal json4
-        let parsed1 = JsonConvert.DeserializeObject<Shape> json1
-        let parsed2 = JsonConvert.DeserializeObject<Shape> json2
-        let parsed3 = JsonConvert.DeserializeObject<Shape> json3
-        let parsed4 = JsonConvert.DeserializeObject<Shape> json4
-        let parse_error =
-            try
-                JsonConvert.DeserializeObject<Shape> "Meh!"
-            with
-            | :? JsonException -> Error
+        let parsed1 = Shape.FromJSON json1
+        let parsed2 = Shape.FromJSON json2
+        let parsed3 = Shape.FromJSON json3
+        let parsed4 = Shape.FromJSON json4
+        let parsedX = Shape.FromJSON "Meh!"
         shape1 |> should equal parsed1
         shape2 |> should equal parsed2
         shape3 |> should equal parsed3
@@ -98,4 +100,4 @@ type Test() =
         parsed4 = shape2 |> should be False
         parsed4 = shape3 |> should be False
         parsed4 = shape4 |> should be True
-        Error = parse_error |> should be True
+        Error = parsedX |> should be True
